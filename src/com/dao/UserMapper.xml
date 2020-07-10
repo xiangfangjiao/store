@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.UserMapper">
+	<resultMap type="User" id="userMap">
+		<id property="userName" column="userName" />
+		<association property="userLevel" javaType="Level">
+			<id property="level_Id" column="level_Id"/>
+		</association>
+	</resultMap>
+	<!-- 根据账户和密码查找用户 -->
+	<select id="findUserByNameAndPsw" resultMap="userMap">
+		select * from free_user left join free_level on 
+		free_user.userLevel=free_level.level_Id
+		where userName=#{userName} and userPsw=#{userPsw}
+	</select>
+	
+	<!-- 根据 userName 查找 User -->
+	<select id="findUserByName" resultMap="userMap">
+		select * from free_user left join free_level
+			on free_user.userLevel=free_level.level_Id
+			where userName=#{userName}
+	</select>
+	
+	<!-- 根据 userName 查找 User -->
+	<select id="findUserByName1" resultMap="userMap">
+		select * from free_user left join free_level
+			on free_user.userLevel=free_level.level_Id
+			where userName=#{userName}
+	</select>
+	
+	<!-- 添加账户信息 -->
+	<insert id="addNewUser" parameterType="user">
+		insert into free_user (userName,userPsw,userPhone,userAlice,userEmail,
+			userSex) values (#{userName},#{userPsw},#{userPhone},
+			#{userAlice},#{userEmail},#{userSex})
+	</insert>
+	
+	<!-- 通过 userName 修改 userPsw -->
+	<update id="updateUserPswById" parameterType="User">
+		update free_user set userPsw=#{userPsw} where userName=#{userName}
+	</update>
+	
+	<!-- 通过 userName 修改 usrAlice、userSex和userEmail -->
+	<update id="updateUserById" parameterType="User">
+		update free_user set userAlice=#{userAlice},userSex=#{userSex},
+			userEmail=#{userEmail} where userName=#{userName}
+	</update>
+	<!-- 根据 userName 修改 userPhoto -->
+	<update id="updateUserPhotoById">
+		update free_user set userPhoto=#{userPhoto} where userName=#{userName}
+	</update>
+	
+	<!-- 显示用户信息 -->
+	<select id="findAllUser" resultMap="userMap">
+		select * from free_user left join free_level
+		on free_user.userLevel=free_level.level_Id 
+	</select>
+		
+	<!-- 显示用户信息 -->
+	<select id="getuserByXxx" resultMap="userMap">
+		select userName,userId,userAlice,userLevel,userPhoto,userPhone,userEmail 
+		from free_user where userName=#{userName}
+	</select>
+	
+		
+		
+</mapper>

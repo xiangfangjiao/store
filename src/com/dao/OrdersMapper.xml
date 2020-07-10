@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.OrdersMapper">
+	<resultMap type="Orders" id="ordersMap">
+		<id property="oid" column="oid"/>
+		<association property="user" javaType="User">
+			<id property="userId" column="userId"/>
+		</association>
+		<association property="goods" javaType="Goods">
+			<id property="proId" column="proId"/>
+		</association>
+	</resultMap>
+	<!-- 查询所有订单 -->
+	<select id="findorders" resultMap="ordersMap">
+		select free_orders.*,free_goods.*,free_user.*  
+		from free_orders left join free_goods on
+		free_orders.gid=free_goods.proId 
+		left join free_user on free_orders.uid=free_user.userId
+	</select>
+	<!-- 查询未发货的订单  0是未发货的订单-->
+	<select id="findOrderByispay" resultMap="ordersMap"  parameterType="Orders">
+		select free_orders.*,free_goods.*,free_user.*  
+		from free_orders left join free_goods on
+		free_orders.gid=free_goods.proId 
+		left join free_user on free_orders.uid=free_user.userId
+		where free_orders.isornotpay=0
+	</select>
+	<!-- 根据id修改订单状态  1  1是已出货的订单-->
+	<update id="updateisPayByOid" parameterType="int">
+	 update free_orders set isornotpay=1 where oid=#{oid}
+	</update>
+	<!-- 查找已发货或已完成订单 -->
+	<select id="findShipmentOrover"  resultMap="ordersMap"  parameterType="Orders">
+		select free_orders.*,free_goods.*,free_user.*  
+		from free_orders left join free_goods on
+		free_orders.gid=free_goods.proId 
+		left join free_user on free_orders.uid=free_user.userId
+		where free_orders.isornotpay=1
+		<if test="oid!=0">
+			or free_orders.isornotpay=2
+		</if>
+		
+	</select>
+	<!-- 根据id修改订单状态  2 2是已收货的订单-->
+	<update id="updateOverByOid" parameterType="int">
+	 update free_orders set isornotpay=2 where oid=#{oid}
+	</update>
+</mapper>

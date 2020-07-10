@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.GoodsMapper">
+	<resultMap type="Goods" id="goodsMap">
+	<id property="proId" column="proId"/>
+		<association property="userId" javaType="User">
+			<id property="userId" column="userId"/>
+		</association>
+	</resultMap>
+	<!-- 查找所有商品信息 -->
+	<select id="findAllGoods" resultType="Goods">
+		select * from free_goods
+	</select>
+	<!-- 添加商品 -->
+	<insert id="AddGoods" parameterType="Goods">
+		insert into free_goods(proName,photo,brand,country,price,categoryId,numbers,message) 
+		values(#{proName},#{photo},#{brand},#{country},#{price},#{category.categoryId},#{numbers},#{message})
+	</insert>
+	<!-- 查找分类 -->
+	<select id="findAllCategory" resultType="Category">
+		select * from free_category
+	</select>
+	<!-- 根据分类名称查找分类 -->
+	<select id="findCategoryByTitle" parameterType="string" resultType="Category">
+		select * from free_category where categoryName=#{categoryName}
+	</select>
+	<!-- 根据id删除分类 -->
+	<delete id="deleteCategoryById" parameterType="int">
+		delete from free_category where categoryId=#{categoryId}
+	</delete>
+	<!-- 添加分类 -->
+	<insert id="addCategory" parameterType="string">
+		insert into free_category(categoryName) values(#{categoryName})
+	</insert>
+	<!-- 根据商品 id查找商品信息 -->
+	<select id="findGoodsById" resultType="Goods">
+		select * from free_goods where proId=#{proId}
+	</select>
+	<!-- 根据id删除商品 -->
+	<delete id="deleteGoodsById" parameterType="int">
+		delete from free_goods where proId=#{proId}
+	</delete>
+	<!-- 根据id修改商品信息 -->
+	<update id="updateGoodsInformestion" parameterType="Goods">
+		update free_goods set proName=#{proName},photo=#{photo},brand=#{brand},country=#{country},
+		price=#{price},categoryId=#{category.categoryId},numbers=#{numbers},message=#{message})
+		where proId=#{proId}
+	</update>
+	
+
+<!-- 动态sql 模糊搜索 -->
+<select id="getItemByXxx" parameterType="Goods">
+select free_goods.proId as proId,proName,price,photo,Message,categoryName from 
+free_goods left join free_categoryon free_goods.categoryId = free_category.categoryId 
+where free_goods.proId=#{proId}
+ </select>
+</mapper>
